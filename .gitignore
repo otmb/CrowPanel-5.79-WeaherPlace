@@ -1,0 +1,5 @@
+config.py
+.DS_Store
+.venv/*
+.mise.toml
+ESP32_GENERIC_S3-SPIRAM_OCT-*
