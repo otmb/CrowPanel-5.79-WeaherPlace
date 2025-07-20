@@ -11,6 +11,8 @@ import ntptime
 import CrowPanel as eink
 from writer import Writer
 import freesans30
+import framebuf
+from icons import weather_icons
 
 # rename config.py.sample -> config.py
 from config import (
@@ -65,10 +67,7 @@ def set_time():
 def get_weather_icon(weather_code):
     for cfg in icon_config:
         if weather_code in cfg[0]:
-            weather_icon = cfg[1] + ".bin"
-            # if not os.path.is_file(weather_icon):
-                # raise FileNotFoundError(f"Error: File '{weather_icon}' not found.")
-            return weather_icon
+            return cfg[1]
     raise ValueError(f"Weather Code:{weather_code} is not set.")
 
 # APIで温度取得
@@ -123,7 +122,10 @@ def screen_rendering(data):
 
             try:
                 weather_icon = get_weather_icon(weather_code)
-                screen.LoadImage(x_center + 10, y_center -10, weather_icon, 128, 128)            
+                if weather_icon in weather_icons:
+                    img_data = bytearray(weather_icons[weather_icon])
+                    img_buf = framebuf.FrameBuffer(img_data, 128, 128, framebuf.MONO_HLSB)
+                    screen.blit(img_buf, x_center + 10, y_center -10)
             except Exception as e:
                 screen.text(f"{e}", x_center, y_center, eink.COLOR_BLACK)
             Writer.set_textpos(screen, x_center + 35, 20)
@@ -138,7 +140,7 @@ def screen_rendering(data):
             view_count += 1
 
     screen.show()
-    print("Completed screen renderin.")
+    print("Completed screen rendering.")
 
 
 def run():

@@ -23,7 +23,6 @@ $ esptool.py --baud 460800 write_flash 0 ESP32_GENERIC_S3-SPIRAM_OCT-20250415-v1
 ```
 
 環境はVSCodeに[MicroPico](https://github.com/paulober/MicroPico)拡張を利用しました。
-フォルダのアップロードがうまく動かなかったので全てルートフォルダに集約しています。
 
 ### VScodeでMicroPicoの操作
 
@@ -32,8 +31,7 @@ $ esptool.py --baud 460800 write_flash 0 ESP32_GENERIC_S3-SPIRAM_OCT-20250415-v1
     - edit config.py
 - CrowPanelには自動で接続できていると思います。以下は接続後の操作になります。
 - エクスプローラーを左クリックで「Upload project to Pico」を実行します。
-    - この操作により、pythonのファイルは全てアップロードされます。
-    - アイコンの *.bin ファイルはアップロードされません。手間ですがひとつずつファイルを左クリックで「Upload file to Pico」を実行しアップロードします。
+    - この操作により、*.py ファイルは全てアップロードされます。
 - 最後にmain.pyを開いた状態で左下の「▷Run」を実行します。
     - うまくいけば画面が表示され、インストールは完了です。
 
@@ -99,4 +97,25 @@ for fname in flist:
         f.write(buffer)
     
     print("Done!", name + ".bin")
+```
+
+.bin ファイルの扱いが手間なので icons.py にアイコンファイルをまとめました。
+```python
+import convert
+import os
+import glob
+
+flist = glob.glob("weather/*.png")
+buffer_list = []
+for fname in flist:
+    name = os.path.basename(fname)
+    name, _, _ = name.split(".")
+    converted = convert.image_to_buffer(fname)
+    buffer = converted[0]
+
+    data = "'{}': {}".format(name, buffer)
+    buffer_list.append(data)
+
+with open("icons.py", "w") as f:
+    f.write("weather_icons = {\n  " + ",\n  ".join(buffer_list) + "\n}")
 ```
