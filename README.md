@@ -7,7 +7,7 @@ CrowPanel ESP32 E-Paper HMI 5.79-inch Displayをベースに、お天気情報�
 [CrowPanel-ESP32-5.79-E-paper](https://github.com/Elecrow-RD/CrowPanel-ESP32-5.79-E-paper-HMI-Display-with-272-792/tree/master/example/arduino/Demos/5.79_wifi_http_openweather)のお天気を取得する処理にはOpenWeatherMapが使われています。
 
 しかしながら、OpenWeatherMapの利用にはクレジットカード登録が必須でしたので、  
-[Open-Meteo](https://open-meteo.com/)APIと[MicroPython](https://micropython.org/)で実装を試してみました。
+[Open-Meteo](https://open-meteo.com/)APIと[MicroPython](https://micropython.org/)で実装を試してみました。  
 Open-Meteo APIはAPIキーを作成しなくても非商用利用であれば無料で利用が可能です。
 
 そのほかはAPIの実行のたびにWiFiをON/OFFすることで省エネ？にしています。
