@@ -8,7 +8,7 @@ CrowPanel ESP32 E-Paper HMI 5.79-inch Displayをベースに、お天気情報�
 
 しかしながら、OpenWeatherMapの利用にはクレジットカード登録が必須でしたので、  
 [Open-Meteo](https://open-meteo.com/)APIと[MicroPython](https://micropython.org/)で実装を試してみました。  
-Open-Meteo APIはAPIキーを作成しなくても非商用利用であれば無料で利用が可能です。
+Open-Meteo APIはAPIキーは不要です。非商用利用であれば無料で利用が可能です。
 
 そのほかはAPIの実行のたびにWiFiをON/OFFすることで省エネ？にしています。
 
