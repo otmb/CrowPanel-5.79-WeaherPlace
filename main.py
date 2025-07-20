@@ -56,8 +56,10 @@ def set_time():
         print("Time set from NTP server.")
         now = utime.localtime(utime.time() + utc_hour * 60 * 60)
         print("Current time:", "{:04d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}".format(now[0], now[1], now[2], now[3], now[4], now[5]))
+        return True
     except OSError as e:
         print("Error setting time:", e)
+    return False
 
 
 def get_weather_icon(weather_code):
@@ -136,15 +138,16 @@ def screen_rendering(data):
             view_count += 1
 
     screen.show()
+    print("Completed screen renderin.")
 
 
 def run():
-    disconnect_wifi()
     if connect_wifi():
         print("is connected wifi")
-        set_time()
-        data = get_weather()
-        screen_rendering(data)
+        if set_time():
+            data = get_weather()
+            screen_rendering(data)
+        disconnect_wifi()
 
 run()
 
