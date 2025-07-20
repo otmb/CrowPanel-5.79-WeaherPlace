@@ -67,7 +67,7 @@ def get_weather_icon(weather_code):
             # if not os.path.is_file(weather_icon):
                 # raise FileNotFoundError(f"Error: File '{weather_icon}' not found.")
             return weather_icon
-    raise ValueError(f"Weatherコード: ({weather_code})が未設定です。")
+    raise ValueError(f"Weather Code:{weather_code} is not set.")
 
 # APIで温度取得
 def get_weather():
