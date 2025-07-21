@@ -74,7 +74,7 @@ def get_weather():
     param = {
         'latitude': latitude,
         'longitude': longitude,
-        'hourly': 'temperature_2m,weather_code,precipitation_probability',
+        'hourly': 'temperature_2m,weather_code,precipitation_probability,is_day',
         'start_date': start_date,
         'timezone': "Asia/Tokyo",
         'end_date': end_date,
@@ -111,6 +111,7 @@ def screen_rendering(data):
             temperature = data["hourly"]["temperature_2m"][index]
             precipitation_probability = data["hourly"]["precipitation_probability"][index]
             weather_code = data["hourly"]["weather_code"][index]
+            is_day = data["hourly"]["is_day"][index]
             _, hour_min = entry.split("T")
 
             x_center = int(792 / 5 * view_count)
@@ -118,6 +119,8 @@ def screen_rendering(data):
 
             try:
                 weather_icon = get_weather_icon(weather_code)
+                if is_day == 0:
+                    weather_icon = "night_" + weather_icon
                 if weather_icon in weather_icons:
                     img_data = bytearray(weather_icons[weather_icon])
                     img_buf = framebuf.FrameBuffer(img_data, 128, 128, framebuf.MONO_HLSB)
