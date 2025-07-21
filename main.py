@@ -151,13 +151,13 @@ def run():
             set_time()
             data = get_weather()
             screen_rendering(data)
-        disconnect_wifi()
-        machine.freq(20000000) # Low Power 20MHz
     except Exception as e:
         screen.fill(eink.COLOR_WHITE)
         screen.text(f"{e}", 0, 0, eink.COLOR_BLACK)
         screen.show()
- 
+    finally:
+        disconnect_wifi()
+        machine.freq(20000000) # Low Power 20MHz
 
 # 起動時実行
 run()
@@ -166,6 +166,9 @@ run()
 try:
     while True:
         min,sec = get_now()[4:6]
+        # Debug
+        # if sec == 1:
+        #     run()
         if min == 1:
             run()
         time.sleep(60)
