@@ -10,7 +10,7 @@ import ntptime
 # E-Paper display
 import CrowPanel as eink
 from writer import Writer
-import freesans30
+import freesans32
 import framebuf
 from icons import weather_icons
 
@@ -23,7 +23,7 @@ from config import (
 
 # Instantiate a Screen
 screen = eink.Screen_579()
-wri = Writer(screen, freesans30)
+wri = Writer(screen, freesans32)
 
 last_execution_time = 0
 interval = 1800 # 30分毎に定期実行
