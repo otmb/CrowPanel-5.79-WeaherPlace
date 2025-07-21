@@ -52,17 +52,12 @@ def disconnect_wifi():
     wlan.active(True)
 
 def set_time():
-    try:
-        ntptime.host = ntp_host
-        ntptime.settime()
-        print("Time set from NTP server.")
-        now = utime.localtime(utime.time() + utc_hour * 60 * 60)
-        print("Current time:", "{:04d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}".format(now[0], now[1], now[2], now[3], now[4], now[5]))
-        return True
-    except OSError as e:
-        print("Error setting time:", e)
-    return False
-
+    ntptime.host = ntp_host
+    time.sleep(0.1)
+    ntptime.settime()
+    print("Time set from NTP server.")
+    now = utime.localtime(utime.time() + utc_hour * 60 * 60)
+    print("Current time:", "{:04d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}".format(now[0], now[1], now[2], now[3], now[4], now[5]))
 
 def get_weather_icon(weather_code):
     for cfg in icon_config:
@@ -72,7 +67,7 @@ def get_weather_icon(weather_code):
 
 # APIで温度取得
 def get_weather():
-
+    
     nowtime = utime.time() + utc_hour * 60 * 60
     now = utime.localtime(nowtime)
     tomorrow = utime.localtime(nowtime + 86400)
@@ -89,7 +84,12 @@ def get_weather():
     }
     query_string = '&'.join(map(lambda key: f"{key}={param[key]}", param.keys()))
     url = api_url + "?" + query_string
+    print("Get Weahter Request Start.")
     response = urequests.get(url)
+    if response.reason != b"OK" or response.status_code >= 400:
+        raise Exception(f"HTTP Request failed. Status Code: {response.status_code}")
+    
+    print("Get Weahter Request Success.")
     data = response.json()
     response.close()
     return data
@@ -146,12 +146,15 @@ def screen_rendering(data):
 def run():
     if connect_wifi():
         print("is connected wifi")
-        if set_time():
+        try:
+            set_time()
             data = get_weather()
             screen_rendering(data)
+        except Exception as e:
+            screen.fill(eink.COLOR_WHITE)
+            screen.text(f"{e}", 0, 0, eink.COLOR_BLACK)
+            screen.show()
         disconnect_wifi()
-
-run()
 
 while True:
     current_time = time.time()
