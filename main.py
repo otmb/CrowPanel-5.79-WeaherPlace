@@ -49,7 +49,6 @@ def disconnect_wifi():
     
     print('disconnect wifi')
     time.sleep(1)
-    wlan.active(True)
 
 def set_time():
     ntptime.host = ntp_host
@@ -144,17 +143,17 @@ def screen_rendering(data):
 
 
 def run():
-    if connect_wifi():
-        print("is connected wifi")
-        try:
+    try:
+        if connect_wifi():
+            print("is connected wifi")
             set_time()
             data = get_weather()
             screen_rendering(data)
-        except Exception as e:
-            screen.fill(eink.COLOR_WHITE)
-            screen.text(f"{e}", 0, 0, eink.COLOR_BLACK)
-            screen.show()
-        disconnect_wifi()
+    except Exception as e:
+        screen.fill(eink.COLOR_WHITE)
+        screen.text(f"{e}", 0, 0, eink.COLOR_BLACK)
+        screen.show()
+    disconnect_wifi()
 
 run()
 last_execution_time = time.time()
