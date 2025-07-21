@@ -156,6 +156,9 @@ def run():
             screen.show()
         disconnect_wifi()
 
+run()
+last_execution_time = time.time()
+
 while True:
     current_time = time.time()
     if current_time - last_execution_time >= interval:
