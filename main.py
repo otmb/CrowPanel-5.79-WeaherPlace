@@ -1,5 +1,4 @@
 # CrowPanel ESP32 5.79" E-paper Display with 272*792 Resolution
-
 import time
 time.sleep(1)
 
@@ -25,9 +24,6 @@ from config import (
 screen = eink.Screen_579()
 wri = Writer(screen, freesans32)
 
-last_execution_time = 0
-interval = 1800 # 30分毎に定期実行
-
 # WiFiに接続
 def connect_wifi():
     wlan = network.WLAN(network.STA_IF)
@@ -50,12 +46,16 @@ def disconnect_wifi():
     print('disconnect wifi')
     time.sleep(1)
 
+
+def get_now(sec=0):
+    return utime.localtime(utime.time() + utc_hour * 60 * 60 + sec)
+
 def set_time():
     ntptime.host = ntp_host
     time.sleep(0.1)
     ntptime.settime()
     print("Time set from NTP server.")
-    now = utime.localtime(utime.time() + utc_hour * 60 * 60)
+    now = get_now()
     print("Current time:", "{:04d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}".format(now[0], now[1], now[2], now[3], now[4], now[5]))
 
 def get_weather_icon(weather_code):
@@ -64,12 +64,10 @@ def get_weather_icon(weather_code):
             return cfg[1]
     raise ValueError(f"Weather Code:{weather_code} is not set.")
 
-# APIで温度取得
+# APIで天候情報取得
 def get_weather():
-    
-    nowtime = utime.time() + utc_hour * 60 * 60
-    now = utime.localtime(nowtime)
-    tomorrow = utime.localtime(nowtime + 86400)
+    now = get_now()
+    tomorrow = get_now(86400)
     start_date = "{:04d}-{:02d}-{:02d}".format(now[0], now[1], now[2])
     end_date = "{:04d}-{:02d}-{:02d}".format(tomorrow[0], tomorrow[1], tomorrow[2])
 
@@ -101,9 +99,8 @@ def screen_rendering(data):
     def get_want_date(now):
         return "{:04d}-{:02d}-{:02d}T{:02d}:00".format(now[0], now[1], now[2], now[3])
 
-    nowtime = utime.time() + utc_hour * 60 * 60
     for i in range(0,5):
-        now = utime.localtime(nowtime + i * 3 * 60 * 60)
+        now = get_now(i * 3 * 60 * 60) # 3時間毎
         want_dates.append(get_want_date(now))
 
     view_count = 0
@@ -155,12 +152,16 @@ def run():
         screen.show()
     disconnect_wifi()
 
+# 起動時実行
 run()
-last_execution_time = time.time()
 
-while True:
-    current_time = time.time()
-    if current_time - last_execution_time >= interval:
-        run()
-        last_execution_time = current_time
-    time.sleep(1)
+# 毎時1分に1度だけ実行
+try:
+    while True:
+        now = get_now()
+        min = now[4]
+        if min == 1:
+            run()
+        time.sleep(60)
+except KeyboardInterrupt:
+    pass
