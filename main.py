@@ -12,6 +12,7 @@ from writer import Writer
 import freesans32
 import framebuf
 from icons import weather_icons
+import machine
 
 # rename config.py.sample -> config.py
 from config import (
@@ -141,19 +142,22 @@ def screen_rendering(data):
     screen.show()
     print("Completed screen rendering.")
 
-
 def run():
     try:
+        machine.freq(240000000) # High Power 240MHz
+        print("freq: ", machine.freq())
         if connect_wifi():
             print("is connected wifi")
             set_time()
             data = get_weather()
             screen_rendering(data)
+        disconnect_wifi()
+        machine.freq(20000000) # Low Power 20MHz
     except Exception as e:
         screen.fill(eink.COLOR_WHITE)
         screen.text(f"{e}", 0, 0, eink.COLOR_BLACK)
         screen.show()
-    disconnect_wifi()
+ 
 
 # 起動時実行
 run()
@@ -161,8 +165,7 @@ run()
 # 毎時1分に1度だけ実行
 try:
     while True:
-        now = get_now()
-        min = now[4]
+        min,sec = get_now()[4:6]
         if min == 1:
             run()
         time.sleep(60)
