@@ -9,7 +9,7 @@ import ntptime
 # E-Paper display
 import CrowPanel as eink
 from writer import Writer
-import freesans32
+import SawarabiGothicRegularNumeric32
 import framebuf
 from icons import weather_icons
 import machine
@@ -23,7 +23,7 @@ from config import (
 
 # Instantiate a Screen
 screen = eink.Screen_579()
-wri = Writer(screen, freesans32)
+wri = Writer(screen, SawarabiGothicRegularNumeric32)
 
 # WiFiに接続
 def connect_wifi():
@@ -128,13 +128,13 @@ def screen_rendering(data):
                     screen.blit(img_buf, x_center + 10, y_center -10)
             except Exception as e:
                 screen.text(f"{e}", x_center, y_center, eink.COLOR_BLACK)
-            Writer.set_textpos(screen, x_center + 35, 20)
+            Writer.set_textpos(screen, x_center + 30, 20)
             wri.printstring(f"{hour_min}", True)
 
-            Writer.set_textpos(screen, x_center + 25, 200)
-            wri.printstring(f"{temperature}°C", True)
+            Writer.set_textpos(screen, x_center + 25, 185)
+            wri.printstring(f"{temperature}℃", True)
 
-            Writer.set_textpos(screen, x_center + 60, 240)
+            Writer.set_textpos(screen, x_center + 60, 230)
             wri.printstring(f"{precipitation_probability}%", True)
             
             view_count += 1

@@ -46,15 +46,14 @@ $ esptool.py --baud 460800 write_flash 0 ESP32_GENERIC_S3-SPIRAM_OCT-20250415-v1
 
 - [cubic9com/crowpanel-5.79_weather-display](https://github.com/cubic9com/crowpanel-5.79_weather-display)
 
-### フォントのカスタム
+### カスタムフォントの作成
 
-サンプルのコードでは温度表示に使う特定の文字が利用できないため、フォントを作り直しました。
+- fonts.googleから[さわらびフォント](https://fonts.google.com/specimen/Sawarabi+Gothic)をダウンロード 
+- 必要となるキャラクターのフォントを作成
 ```
-$ curl -LO https://ftp.gnu.org/gnu/freefont/freefont-otf-20080323.zip
-$ unzip freefont-otf-20080323.zip
-$ cp freefont-otf-20080323/FreeSans.otf FreeSans.otf
-$ curl -LO https://github.com/peterhinch/micropython-font-to-py/raw/refs/heads/master/charsets/extended
-$ font_to_py FreeSans.otf 30 freesans30.py -k extended
+$ curl -LO https://raw.githubusercontent.com/peterhinch/micropython-font-to-py/c24761448e6ef1c40716b9b2b629e6fa37b2c9d2/font_to_py.py
+
+$ python font_to_py.py -c " 0123456789.C°℃:%％" SawarabiGothic-Regular.ttf 32 SawarabiGothicRegularNumeric32.py 
 ```
 
 - 参考: [peterhinch/micropython-font-to-py](https://github.com/peterhinch/micropython-font-to-py)
@@ -70,7 +69,7 @@ jpegやpngをCrowPanel用のモノクロ画像に変換できるので便利で�
 
 #### ImageMagickのconvertコマンドでsvgをpngに変換
 ```shell
-$ for i in `ls *.svg` convert -size 128x128 $i $i.png
+$ for i in `ls *.svg`; convert -size 128x128 $i $i.png
 ```
 
 ```shell
@@ -78,28 +77,9 @@ $ curl -LO https://raw.githubusercontent.com/TimHanewich/MicroPython-SSD1306/ref
 ```
 
 #### モノクロ画像の作成
-```python
-import os
-import convert
-import glob
-flist = glob.glob("weather/*.png")
 
-os.makedirs("output/", exist_ok=True)
+icons.py にアイコンファイルをまとめる処理
 
-for fname in flist:
-    name = os.path.basename(fname)
-    name, _, _ = name.split(".")
-    print(name)
-    converted = convert.image_to_buffer(fname)
-    buffer = converted[0]
-
-    with open("output/" + name + ".bin", "wb") as f:
-        f.write(buffer)
-    
-    print("Done!", name + ".bin")
-```
-
-.bin ファイルの扱いが手間なので icons.py にアイコンファイルをまとめました。
 ```python
 import convert
 import os
