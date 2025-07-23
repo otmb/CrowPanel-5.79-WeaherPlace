@@ -64,22 +64,24 @@ $ python font_to_py.py -c " 0123456789.C°℃:%％" SawarabiGothic-Regular.ttf 3
 - [erikflowers/weather-icons](https://github.com/erikflowers/weather-icons)
 
 #### モノクロ画像の変換処理
-jpegやpngをCrowPanel用のモノクロ画像に変換できるので便利です。
-- [TimHanewich/MicroPython-SSD130](https://github.com/TimHanewich/MicroPython-SSD1306)
 
-#### ImageMagickのconvertコマンドでsvgをpngに変換
+ImageMagickのconvertコマンドでsvgをpngに変換した後、icons.py にアイコンファイルをまとめます。  
+
+1. ImageMagickのconvertコマンドでsvgをpngに変換  
 ```shell
 $ for i in `ls *.svg`; convert -size 128x128 $i $i.png
 ```
 
+2. icons.py にアイコンファイルをまとめる処理
+ 
+CrowPanel用のモノクロ画像の作成には[TimHanewich/MicroPython-SSD130](https://github.com/TimHanewich/MicroPython-SSD1306)のコードを利用しました。  
+
+下記からダウンロードします。
 ```shell
 $ curl -LO https://raw.githubusercontent.com/TimHanewich/MicroPython-SSD1306/refs/heads/master/src/convert.py
 ```
 
-#### モノクロ画像の作成
-
-icons.py にアイコンファイルをまとめる処理
-
+下記の処理を実行します。
 ```python
 import convert
 import os
