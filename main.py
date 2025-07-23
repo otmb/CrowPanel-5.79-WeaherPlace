@@ -67,18 +67,13 @@ def get_weather_icon(weather_code):
 
 # APIで天候情報取得
 def get_weather():
-    now = get_now()
-    tomorrow = get_now(86400)
-    start_date = "{:04d}-{:02d}-{:02d}".format(now[0], now[1], now[2])
-    end_date = "{:04d}-{:02d}-{:02d}".format(tomorrow[0], tomorrow[1], tomorrow[2])
-
     param = {
         'latitude': latitude,
         'longitude': longitude,
-        'hourly': 'temperature_2m,weather_code,precipitation_probability,is_day',
-        'start_date': start_date,
+        'hourly': 'temperature_2m,weather_code,precipitation,is_day',
+        'models': 'jma_seamless',
         'timezone': "Asia/Tokyo",
-        'end_date': end_date,
+        'forecast_days': 3,
     }
     query_string = '&'.join(map(lambda key: f"{key}={param[key]}", param.keys()))
     url = api_url + "?" + query_string
@@ -91,15 +86,15 @@ def get_weather():
     data = response.json()
     response.close()
     return data
-    
+
+def get_want_date(now):
+    return "{:04d}-{:02d}-{:02d}T{:02d}:00".format(now[0], now[1], now[2], now[3])
+
 def screen_rendering(data):
     # prepare framebuffer
     screen.fill(eink.COLOR_WHITE)
     want_dates = []
     
-    def get_want_date(now):
-        return "{:04d}-{:02d}-{:02d}T{:02d}:00".format(now[0], now[1], now[2], now[3])
-
     for i in range(0,5):
         now = get_now(i * 3 * 60 * 60) # 3時間毎
         want_dates.append(get_want_date(now))
@@ -110,7 +105,7 @@ def screen_rendering(data):
         if entry in want_dates:
             index = data["hourly"]["time"].index(entry)
             temperature = data["hourly"]["temperature_2m"][index]
-            precipitation_probability = data["hourly"]["precipitation_probability"][index]
+            precipitation = int(data["hourly"]["precipitation"][index])
             weather_code = data["hourly"]["weather_code"][index]
             is_day = data["hourly"]["is_day"][index]
             _, hour_min = entry.split("T")
@@ -134,8 +129,8 @@ def screen_rendering(data):
             Writer.set_textpos(screen, x_center + 25, 185)
             wri.printstring(f"{temperature}℃", True)
 
-            Writer.set_textpos(screen, x_center + 60, 230)
-            wri.printstring(f"{precipitation_probability}%", True)
+            Writer.set_textpos(screen, x_center + 70, 230)
+            wri.printstring(f"{precipitation}", True)
             
             view_count += 1
 
